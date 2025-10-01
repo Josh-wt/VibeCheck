@@ -8,8 +8,8 @@ const corsHeaders = {
 };
 
 const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
-const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const backendUrl = Deno.env.get('SUPABASE_URL')!;
+const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 // Enhanced fallback keyword-based classifier
 function fallbackClassifier(userProfile: any): { socialGroup: string; confidence: number; reasoning: string; keyFactors: string[] } {
@@ -85,9 +85,9 @@ serve(async (req) => {
 
     console.log('🎯 [ANALYZE] Starting for user:', userId);
 
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabase = createClient(backendUrl, serviceKey);
 
-    // Fetch user data
+    // Fetch user data from backend
     const [profileResult, academicResult, activityResult, weekendResult] = await Promise.all([
       supabase.from('profiles').select('quiz_responses').eq('user_id', userId).maybeSingle(),
       supabase.from('academic_profiles').select('*').eq('user_id', userId).maybeSingle(),
@@ -110,7 +110,7 @@ serve(async (req) => {
       throw new Error('Insufficient data to determine social group');
     }
 
-    // Get user grade and school for context
+    // Get user grade and school context from backend
     const { data: profileData } = await supabase
       .from('profiles')
       .select('grade, school_name')
@@ -144,7 +144,7 @@ serve(async (req) => {
       } : null
     };
 
-    // Fetch social groups
+    // Fetch social groups from backend
     const { data: socialGroups, error: groupsError } = await supabase.from('social_groups').select('*');
     if (groupsError) throw groupsError;
     if (!socialGroups || socialGroups.length === 0) throw new Error('No social groups available');
@@ -278,7 +278,7 @@ Provide the best-fit social group with detailed reasoning based on the data abov
       usedFallback
     });
 
-    // Update profile
+    // Update profile in backend
     const { error: updateError } = await supabase
       .from('profiles')
       .update({

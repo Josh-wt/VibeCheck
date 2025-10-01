@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client"; // Backend client
 import Header from "@/components/Layout/Header";
 import Quiz from "@/components/Discovery/Quiz";
 import RealMatchResults from "@/components/Discovery/RealMatchResults";
@@ -90,7 +90,7 @@ const Discovery = () => {
         throw progressError;
       }
 
-      console.log('🤖 [AI] Invoking analyze-social-group function with 30s timeout...');
+      console.log('🤖 [AI] Invoking backend AI analysis with 30s timeout...');
 
       // Create timeout promise
       const timeoutPromise = new Promise((_, reject) => 

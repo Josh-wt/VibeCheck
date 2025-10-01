@@ -231,7 +231,7 @@ const Onboarding = () => {
       console.log('Error:', error);
 
       if (error) {
-        console.error('Supabase function error:', error);
+        console.error('Backend function error:', error);
         throw error;
       }
 
