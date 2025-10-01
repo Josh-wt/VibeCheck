@@ -293,6 +293,9 @@ export type Database = {
       }
       profiles: {
         Row: {
+          academic_strengths: string[] | null
+          academic_weaknesses: string[] | null
+          ai_analysis_completed: boolean | null
           created_at: string | null
           email: string | null
           first_name: string | null
@@ -309,6 +312,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          academic_strengths?: string[] | null
+          academic_weaknesses?: string[] | null
+          ai_analysis_completed?: boolean | null
           created_at?: string | null
           email?: string | null
           first_name?: string | null
@@ -325,6 +331,9 @@ export type Database = {
           user_id: string
         }
         Update: {
+          academic_strengths?: string[] | null
+          academic_weaknesses?: string[] | null
+          ai_analysis_completed?: boolean | null
           created_at?: string | null
           email?: string | null
           first_name?: string | null

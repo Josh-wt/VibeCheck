@@ -64,9 +64,9 @@ const RealMatchResults = ({ onBackToQuiz, onNavigateToPage }: RealMatchResultsPr
 
       if (!userProfile.social_group) {
         console.log('⏳ [WAIT] No social group yet, polling...');
-        // Poll for social group assignment (max 12 seconds with 2s intervals)
+        // Poll for social group assignment
         let attempts = 0;
-        const maxAttempts = 6;
+        const maxAttempts = 10;
         
         const pollInterval = setInterval(async () => {
           attempts++;
@@ -85,27 +85,29 @@ const RealMatchResults = ({ onBackToQuiz, onNavigateToPage }: RealMatchResultsPr
             return;
           }
 
-          if (updatedProfile?.social_group) {
-            console.log('✅ [FOUND] Social group assigned:', updatedProfile.social_group);
+          if (updatedProfile?.social_group || attempts >= maxAttempts) {
+            console.log('✅ [RESULT] Social group:', updatedProfile?.social_group || 'timeout');
             clearInterval(pollInterval);
-            setCurrentUserProfile({ ...userProfile, ...updatedProfile });
             
-            // Fetch group details and members
-            const { data: groupData } = await supabase
-              .from('social_groups')
-              .select('*')
-              .eq('name', updatedProfile.social_group)
-              .single();
+            if (updatedProfile?.social_group) {
+              setCurrentUserProfile({ ...userProfile, ...updatedProfile });
+              
+              // Fetch group details
+              const { data: groupData } = await supabase
+                .from('social_groups')
+                .select('*')
+                .eq('name', updatedProfile.social_group)
+                .single();
+              
+              if (groupData) setSocialGroupDetails(groupData);
+              
+              // Find group members
+              await findGroupMembers(updatedProfile.social_group, userProfile.school_name);
+            }
             
-            if (groupData) setSocialGroupDetails(groupData);
-            await findGroupMembers({ ...userProfile, ...updatedProfile });
-            setLoading(false);
-          } else if (attempts >= maxAttempts) {
-            console.warn('⚠️ [TIMEOUT] No social group assigned after polling');
-            clearInterval(pollInterval);
             setLoading(false);
           }
-        }, 2000);
+        }, 2000); // Check every 2 seconds
         
         return;
       }
@@ -116,26 +118,25 @@ const RealMatchResults = ({ onBackToQuiz, onNavigateToPage }: RealMatchResultsPr
         .select('*')
         .eq('name', userProfile.social_group)
         .single();
-
-      console.log('🎭 [GROUP]', groupData?.name);
-
+      
       if (groupData) setSocialGroupDetails(groupData);
-      await findGroupMembers(userProfile);
+      
+      await findGroupMembers(userProfile.social_group, userProfile.school_name);
+      setLoading(false);
+      
     } catch (error) {
-      console.error('❌ [MATCHES] Error:', error);
-    } finally {
+      console.error('❌ [ERROR] Loading data:', error);
       setLoading(false);
     }
   };
 
-  const findGroupMembers = async (userProfile: any) => {
-    if (!userProfile || !user) return;
+  const findGroupMembers = async (socialGroup: string, schoolName: string) => {
+    if (!socialGroup || !schoolName || !user) return;
 
     console.log('🔍 Finding group members for:', {
       userId: user.id,
-      socialGroup: userProfile.social_group,
-      schoolName: userProfile.school_name,
-      grade: userProfile.grade
+      socialGroup,
+      schoolName
     });
 
     try {
@@ -143,8 +144,8 @@ const RealMatchResults = ({ onBackToQuiz, onNavigateToPage }: RealMatchResultsPr
       const { data: groupMembers, error } = await supabase
         .from('profiles')
         .select('user_id, first_name, last_name, grade, school_name, social_group')
-        .eq('social_group', userProfile.social_group)
-        .eq('school_name', userProfile.school_name)
+        .eq('social_group', socialGroup)
+        .eq('school_name', schoolName)
         .neq('user_id', user.id)
         .not('first_name', 'is', null)
         .not('last_name', 'is', null);

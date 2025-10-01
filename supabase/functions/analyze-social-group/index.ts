@@ -12,7 +12,7 @@ const backendUrl = Deno.env.get('SUPABASE_URL')!;
 const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 // Enhanced fallback keyword-based classifier optimized for friendship quiz responses
-function fallbackClassifier(userProfile: any): { socialGroup: string; confidence: number; reasoning: string; keyFactors: string[] } {
+function fallbackClassifier(userProfile: any): { socialGroup: string; confidence: number; reasoning: string; keyFactors: string[]; academicStrengths: string[]; academicWeaknesses: string[] } {
   const quizText = (userProfile.personalityAnswers || []).join(' ').toLowerCase();
   const profileText = JSON.stringify({
     academic: userProfile.academic,
@@ -92,11 +92,24 @@ function fallbackClassifier(userProfile: any): { socialGroup: string; confidence
   else if (topGroup[1] > 5) confidence = 0.75;
   else if (topGroup[1] > 0) confidence = 0.70;
 
+  // Analyze academic strengths and weaknesses from profile data
+  const academicStrengths: string[] = [];
+  const academicWeaknesses: string[] = [];
+  
+  if (userProfile.academic) {
+    if (userProfile.academic.favoriteSubjects) academicStrengths.push(...userProfile.academic.favoriteSubjects);
+    if (userProfile.academic.teachingSubjects) academicStrengths.push(...userProfile.academic.teachingSubjects);
+    if (userProfile.academic.struggleSubjects) academicWeaknesses.push(...userProfile.academic.struggleSubjects);
+    if (userProfile.academic.helpNeeded) academicWeaknesses.push(...userProfile.academic.helpNeeded);
+  }
+
   return {
     socialGroup: topGroup[0],
     confidence,
     reasoning: `Personality analysis identified ${topGroup[1]} strong indicators for ${topGroup[0]} based on your responses`,
-    keyFactors: sortedGroups.slice(0, 3).map(([group, score]) => `${group}: ${score} indicators`)
+    keyFactors: sortedGroups.slice(0, 3).map(([group, score]) => `${group}: ${score} indicators`),
+    academicStrengths: [...new Set(academicStrengths)], // Remove duplicates
+    academicWeaknesses: [...new Set(academicWeaknesses)]
   };
 }
 
@@ -195,20 +208,25 @@ serve(async (req) => {
           messages: [
             {
               role: 'system',
-              content: `You are an expert at analyzing high school student personalities and matching them to social groups. You excel at understanding personality traits even from limited data.
+              content: `You are an expert at analyzing high school student personalities, matching them to social groups, and identifying their academic strengths and weaknesses.
 
 Available Social Groups:
 ${socialGroups.map(g => `- ${g.name}: ${g.description}`).join('\n')}
 
-Instructions:
+Instructions for Social Group Assignment:
 - Focus PRIMARILY on personality indicators from quiz responses - these reveal core traits
 - When available, use academic, activity, and weekend data for refinement
 - Look for key personality patterns: social vs. solitary, active vs. reflective, creative vs. analytical, structured vs. flexible
 - Even with minimal data, identify the dominant personality theme
 - Choose the group that best matches their personality profile
-- Provide confidence score (0-1): Above 0.7 is strong, 0.5-0.7 is good, below 0.5 needs more data
 - ALWAYS recommend a group - every personality has a best-fit social group
-- Consider that friendship quiz responses are the most reliable personality indicators`
+
+Instructions for Academic Analysis:
+- Analyze favorite subjects, teaching subjects, and interests to identify STRENGTHS (subjects they excel at)
+- Analyze struggle subjects and help needed to identify WEAKNESSES (subjects they need help with)
+- Use common subject names: Math, Science, English, History, Art, Music, Physical Education, Computer Science, etc.
+- If academic data is limited, infer from personality: Tech Enthusiasts → Computer Science strength, Academic Achievers → multiple academic strengths
+- ALWAYS provide at least 1-2 subjects for both strengths and weaknesses based on available data and personality type`
             },
             {
               role: 'user',
@@ -227,8 +245,8 @@ Provide the best-fit social group with detailed reasoning based on the data abov
           tools: [{
             type: "function",
             function: {
-              name: "choose_social_group",
-              description: "Select the best-fit social group for this student",
+              name: "assign_student_profile",
+              description: "Assign social group and academic strengths/weaknesses to the student",
               parameters: {
                 type: "object",
                 properties: {
@@ -249,14 +267,24 @@ Provide the best-fit social group with detailed reasoning based on the data abov
                     type: "array",
                     items: { type: "string" },
                     description: "Key factors that influenced the decision"
+                  },
+                  academicStrengths: {
+                    type: "array",
+                    items: { type: "string" },
+                    description: "Subjects the student is strong at (e.g., 'Math', 'Science', 'English', 'History')"
+                  },
+                  academicWeaknesses: {
+                    type: "array",
+                    items: { type: "string" },
+                    description: "Subjects the student needs help with (e.g., 'Math', 'Science', 'English', 'History')"
                   }
                 },
-                required: ["socialGroup", "confidence", "reasoning", "keyFactors"],
+                required: ["socialGroup", "confidence", "reasoning", "keyFactors", "academicStrengths", "academicWeaknesses"],
                 additionalProperties: false
               }
             }
           }],
-          tool_choice: { type: "function", function: { name: "choose_social_group" } }
+          tool_choice: { type: "function", function: { name: "assign_student_profile" } }
         }),
       });
 
@@ -306,13 +334,16 @@ Provide the best-fit social group with detailed reasoning based on the data abov
       usedFallback
     });
 
-    // Update profile in backend
+    // Update profile in backend with social group and academic tags
     const { error: updateError } = await supabase
       .from('profiles')
       .update({
         social_group: analysis.socialGroup,
         social_group_analysis: analysis,
-        social_group_updated_at: new Date().toISOString()
+        social_group_updated_at: new Date().toISOString(),
+        academic_strengths: analysis.academicStrengths || [],
+        academic_weaknesses: analysis.academicWeaknesses || [],
+        ai_analysis_completed: true
       })
       .eq('user_id', userId);
 
