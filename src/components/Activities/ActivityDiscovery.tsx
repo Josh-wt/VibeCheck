@@ -82,8 +82,7 @@ const ActivityDiscovery = ({ userProfile }: ActivityDiscoveryProps) => {
       // Get existing activities
       const { data: activities, error: activitiesError } = await supabase
         .from("activities")
-        .select("*")
-        .eq("is_active", true);
+        .select("*");
 
       if (activitiesError) throw activitiesError;
 

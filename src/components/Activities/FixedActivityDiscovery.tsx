@@ -130,9 +130,11 @@ const FixedActivityDiscovery = ({ userProfile }: FixedActivityDiscoveryProps) =>
       // Filter by same school and similar grade
       const schoolActivities = proposals?.filter(proposal => {
         const proposerProfile = proposerProfiles?.find(p => p.user_id === proposal.proposed_by);
+        const proposerGrade = parseInt(proposerProfile?.grade || '0');
+        const userGrade = parseInt(userProfile.grade || '0');
         return proposerProfile && 
                proposerProfile.school_name === userProfile.school_name &&
-               Math.abs(proposerProfile.grade - userProfile.grade) <= 1;
+               Math.abs(proposerGrade - userGrade) <= 1;
       }).map(proposal => ({
         id: proposal.id,
         name: proposal.name,
@@ -204,9 +206,11 @@ const FixedActivityDiscovery = ({ userProfile }: FixedActivityDiscoveryProps) =>
       // Filter by same school and similar grade
       const schoolProposals = proposals?.filter(proposal => {
         const proposerProfile = proposerProfiles?.find(p => p.user_id === proposal.proposed_by);
+        const proposerGrade = parseInt(proposerProfile?.grade || '0');
+        const userGrade = parseInt(userProfile.grade || '0');
         return proposerProfile && 
                proposerProfile.school_name === userProfile.school_name &&
-               Math.abs(proposerProfile.grade - userProfile.grade) <= 1;
+               Math.abs(proposerGrade - userGrade) <= 1;
       }).map(proposal => {
         const proposerProfile = proposerProfiles?.find(p => p.user_id === proposal.proposed_by);
         return {

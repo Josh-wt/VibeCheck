@@ -120,9 +120,11 @@ const RealWeekendDiscovery = ({ userProfile }: RealWeekendDiscoveryProps) => {
               .single();
 
             // Filter by same school and similar grade (within 2 grades)
+            const organizerGrade = parseInt(organizerData?.grade || '0');
+            const currentUserGrade = parseInt(currentUserProfile.grade || '0');
             if (organizerData && 
                 organizerData.school_name === currentUserProfile.school_name &&
-                Math.abs(organizerData.grade - currentUserProfile.grade) <= 2) {
+                Math.abs(organizerGrade - currentUserGrade) <= 2) {
               
               return {
                 id: plan.id,
@@ -189,9 +191,11 @@ const RealWeekendDiscovery = ({ userProfile }: RealWeekendDiscoveryProps) => {
               .single();
 
             // Filter by same school and similar grade
+            const profileGrade = parseInt(profileData?.grade || '0');
+            const currentUserGrade = parseInt(currentUserProfile.grade || '0');
             if (profileData && 
                 profileData.school_name === currentUserProfile.school_name &&
-                Math.abs(profileData.grade - currentUserProfile.grade) <= 2) {
+                Math.abs(profileGrade - currentUserGrade) <= 2) {
 
               // Calculate compatibility
               const userActivities = Array.isArray(userProfile.favorite_activities) 
@@ -228,8 +232,8 @@ const RealWeekendDiscovery = ({ userProfile }: RealWeekendDiscoveryProps) => {
               return {
                 id: interest.user_id,
                 name: `${profileData.first_name || ''} ${profileData.last_name || ''}`.trim(),
-                grade: profileData.grade,
-                school_name: profileData.school_name,
+              grade: profileGrade,
+              school_name: profileData.school_name,
                 compatibilityScore,
                 sharedActivities,
                 energyLevel: interest.energy_level,
@@ -287,12 +291,12 @@ const RealWeekendDiscovery = ({ userProfile }: RealWeekendDiscoveryProps) => {
     try {
       const { error } = await supabase
         .from('weekend_connection_requests')
-        .insert({
+        .insert([{
           requester_id: user.id,
-          plan_id: matchId, // Using as target user for now
+          recipient_id: matchId,
           status: 'pending',
-          message: 'Would love to connect for weekend activities!'
-        });
+          activity_preference: 'Weekend activities'
+        }]);
 
       if (error) throw error;
 
@@ -308,6 +312,7 @@ const RealWeekendDiscovery = ({ userProfile }: RealWeekendDiscoveryProps) => {
     try {
       const planData = {
         ...newPlan,
+        organizer_id: user.id,
         user_id: user.id,
         planned_date: new Date(newPlan.planned_date).toISOString(),
         expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
@@ -317,7 +322,7 @@ const RealWeekendDiscovery = ({ userProfile }: RealWeekendDiscoveryProps) => {
 
       const { error } = await supabase
         .from('weekend_plans')
-        .insert(planData);
+        .insert([planData]);
 
       if (error) throw error;
 

@@ -106,9 +106,11 @@ const FixedStudyPartnerResults = ({ userProfile }: FixedStudyPartnerResultsProps
       // Filter by same school and similar grade, then calculate complementary matches
       const schoolPeers = academicProfiles.filter(academicProfile => {
         const profile = userProfiles?.find(p => p.user_id === academicProfile.user_id);
+        const profileGrade = parseInt(profile?.grade || '0');
+        const currentUserGrade = parseInt(currentUserProfile.grade || '0');
         return profile && 
                profile.school_name === currentUserProfile.school_name &&
-               Math.abs(profile.grade - currentUserProfile.grade) <= 1;
+               Math.abs(profileGrade - currentUserGrade) <= 1;
       });
 
       // Calculate complementary matches with current user's academic profile
@@ -122,6 +124,8 @@ const FixedStudyPartnerResults = ({ userProfile }: FixedStudyPartnerResultsProps
       const matches = schoolPeers.map(academicProfile => {
         const profile = userProfiles?.find(p => p.user_id === academicProfile.user_id);
         if (!profile) return null;
+        
+        const partnerGrade = parseInt(profile.grade || '0');
 
         const peerCanTeach = Array.isArray(academicProfile.teaching_subjects) 
           ? academicProfile.teaching_subjects 
@@ -146,7 +150,7 @@ const FixedStudyPartnerResults = ({ userProfile }: FixedStudyPartnerResultsProps
         return {
           id: academicProfile.user_id,
           name: `${profile.first_name || 'Student'} ${profile.last_name || ''}`.trim(),
-          grade: profile.grade,
+          grade: partnerGrade,
           school_name: profile.school_name,
           canHelp,
           needsHelp,

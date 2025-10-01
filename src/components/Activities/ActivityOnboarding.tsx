@@ -159,15 +159,14 @@ const ActivityOnboarding = ({ onComplete }: ActivityOnboardingProps) => {
     try {
       const { error } = await supabase
         .from("activity_profiles")
-        .upsert({
+        .upsert([{
           user_id: user.id,
           current_activities: responses.currentActivities,
           interested_activities: responses.interestedActivities,
           time_commitment: responses.timeCommitment,
-          leadership_interest: responses.leadershipInterest,
-          activity_goals: responses.activityGoals,
-          onboarding_completed: true
-        });
+          leadership_interest: responses.leadershipInterest === 'yes',
+          activity_goals: responses.activityGoals
+        }]);
 
       if (error) throw error;
 

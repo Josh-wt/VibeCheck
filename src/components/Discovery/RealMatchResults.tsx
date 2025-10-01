@@ -160,7 +160,7 @@ const RealMatchResults = ({ onBackToQuiz, onNavigateToPage }: RealMatchResultsPr
       const transformedMatches = groupMembers?.map((member) => ({
         id: member.user_id,
         name: `${member.first_name} ${member.last_name}`,
-        grade: member.grade,
+        grade: parseInt(member.grade) || 0,
         school_name: member.school_name,
         social_group: member.social_group
       })) || [];

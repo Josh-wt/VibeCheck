@@ -14,7 +14,558 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      academic_profiles: {
+        Row: {
+          assessment_completed: boolean | null
+          availability: string[] | null
+          created_at: string | null
+          favorite_subjects: string[] | null
+          help_needed_subjects: string[] | null
+          id: string
+          struggle_subjects: string[] | null
+          study_style: string | null
+          teaching_subjects: string[] | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          assessment_completed?: boolean | null
+          availability?: string[] | null
+          created_at?: string | null
+          favorite_subjects?: string[] | null
+          help_needed_subjects?: string[] | null
+          id?: string
+          struggle_subjects?: string[] | null
+          study_style?: string | null
+          teaching_subjects?: string[] | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          assessment_completed?: boolean | null
+          availability?: string[] | null
+          created_at?: string | null
+          favorite_subjects?: string[] | null
+          help_needed_subjects?: string[] | null
+          id?: string
+          struggle_subjects?: string[] | null
+          study_style?: string | null
+          teaching_subjects?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      activities: {
+        Row: {
+          advisor_contact: string | null
+          category: string
+          created_at: string | null
+          current_members: number | null
+          description: string | null
+          id: string
+          location: string | null
+          max_members: number | null
+          meeting_times: string | null
+          name: string
+        }
+        Insert: {
+          advisor_contact?: string | null
+          category: string
+          created_at?: string | null
+          current_members?: number | null
+          description?: string | null
+          id?: string
+          location?: string | null
+          max_members?: number | null
+          meeting_times?: string | null
+          name: string
+        }
+        Update: {
+          advisor_contact?: string | null
+          category?: string
+          created_at?: string | null
+          current_members?: number | null
+          description?: string | null
+          id?: string
+          location?: string | null
+          max_members?: number | null
+          meeting_times?: string | null
+          name?: string
+        }
+        Relationships: []
+      }
+      activity_participation: {
+        Row: {
+          activity_id: string
+          id: string
+          joined_at: string | null
+          user_id: string
+        }
+        Insert: {
+          activity_id: string
+          id?: string
+          joined_at?: string | null
+          user_id: string
+        }
+        Update: {
+          activity_id?: string
+          id?: string
+          joined_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_activity_participation_activity"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activity_profiles: {
+        Row: {
+          activity_goals: string[] | null
+          created_at: string | null
+          current_activities: string[] | null
+          id: string
+          interested_activities: string[] | null
+          leadership_interest: boolean | null
+          time_commitment: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          activity_goals?: string[] | null
+          created_at?: string | null
+          current_activities?: string[] | null
+          id?: string
+          interested_activities?: string[] | null
+          leadership_interest?: boolean | null
+          time_commitment?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          activity_goals?: string[] | null
+          created_at?: string | null
+          current_activities?: string[] | null
+          id?: string
+          interested_activities?: string[] | null
+          leadership_interest?: boolean | null
+          time_commitment?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      club_interest: {
+        Row: {
+          created_at: string | null
+          id: string
+          proposal_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          proposal_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          proposal_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_club_interest_proposal"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "club_proposals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      club_proposals: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          interest_count: number | null
+          location: string | null
+          max_members: number | null
+          meeting_times: string | null
+          min_members: number | null
+          name: string
+          proposed_by: string
+          status: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          interest_count?: number | null
+          location?: string | null
+          max_members?: number | null
+          meeting_times?: string | null
+          min_members?: number | null
+          name: string
+          proposed_by: string
+          status?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          interest_count?: number | null
+          location?: string | null
+          max_members?: number | null
+          meeting_times?: string | null
+          min_members?: number | null
+          name?: string
+          proposed_by?: string
+          status?: string | null
+        }
+        Relationships: []
+      }
+      connections: {
+        Row: {
+          created_at: string | null
+          id: string
+          status: string | null
+          user1_id: string
+          user2_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          status?: string | null
+          user1_id: string
+          user2_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          status?: string | null
+          user1_id?: string
+          user2_id?: string
+        }
+        Relationships: []
+      }
+      onboarding_progress: {
+        Row: {
+          academic_assessment_completed: boolean | null
+          activity_onboarding_completed: boolean | null
+          created_at: string | null
+          friendship_discovery_completed: boolean | null
+          id: string
+          updated_at: string | null
+          user_id: string
+          weekend_assessment_completed: boolean | null
+        }
+        Insert: {
+          academic_assessment_completed?: boolean | null
+          activity_onboarding_completed?: boolean | null
+          created_at?: string | null
+          friendship_discovery_completed?: boolean | null
+          id?: string
+          updated_at?: string | null
+          user_id: string
+          weekend_assessment_completed?: boolean | null
+        }
+        Update: {
+          academic_assessment_completed?: boolean | null
+          activity_onboarding_completed?: boolean | null
+          created_at?: string | null
+          friendship_discovery_completed?: boolean | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string
+          weekend_assessment_completed?: boolean | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          first_name: string | null
+          full_name: string | null
+          grade: string | null
+          id: string
+          last_name: string | null
+          quiz_responses: Json | null
+          school_name: string | null
+          social_group: string | null
+          social_group_analysis: Json | null
+          social_group_updated_at: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          first_name?: string | null
+          full_name?: string | null
+          grade?: string | null
+          id?: string
+          last_name?: string | null
+          quiz_responses?: Json | null
+          school_name?: string | null
+          social_group?: string | null
+          social_group_analysis?: Json | null
+          social_group_updated_at?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          first_name?: string | null
+          full_name?: string | null
+          grade?: string | null
+          id?: string
+          last_name?: string | null
+          quiz_responses?: Json | null
+          school_name?: string | null
+          social_group?: string | null
+          social_group_analysis?: Json | null
+          social_group_updated_at?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      social_groups: {
+        Row: {
+          characteristics: Json | null
+          communication_style: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          ideal_activities: Json | null
+          name: string
+        }
+        Insert: {
+          characteristics?: Json | null
+          communication_style?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          ideal_activities?: Json | null
+          name: string
+        }
+        Update: {
+          characteristics?: Json | null
+          communication_style?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          ideal_activities?: Json | null
+          name?: string
+        }
+        Relationships: []
+      }
+      study_connections: {
+        Row: {
+          created_at: string | null
+          id: string
+          partner_id: string
+          requester_id: string
+          status: string | null
+          subject: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          partner_id: string
+          requester_id: string
+          status?: string | null
+          subject?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          partner_id?: string
+          requester_id?: string
+          status?: string | null
+          subject?: string | null
+        }
+        Relationships: []
+      }
+      weekend_connection_requests: {
+        Row: {
+          activity_preference: string | null
+          created_at: string | null
+          id: string
+          recipient_id: string
+          requester_id: string
+          status: string | null
+        }
+        Insert: {
+          activity_preference?: string | null
+          created_at?: string | null
+          id?: string
+          recipient_id: string
+          requester_id: string
+          status?: string | null
+        }
+        Update: {
+          activity_preference?: string | null
+          created_at?: string | null
+          id?: string
+          recipient_id?: string
+          requester_id?: string
+          status?: string | null
+        }
+        Relationships: []
+      }
+      weekend_interests: {
+        Row: {
+          budget_range: string | null
+          created_at: string | null
+          energy_level: string | null
+          favorite_activities: string[] | null
+          id: string
+          parent_permission_level: string | null
+          preferred_group_size: string | null
+          preferred_timings: string[] | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          budget_range?: string | null
+          created_at?: string | null
+          energy_level?: string | null
+          favorite_activities?: string[] | null
+          id?: string
+          parent_permission_level?: string | null
+          preferred_group_size?: string | null
+          preferred_timings?: string[] | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          budget_range?: string | null
+          created_at?: string | null
+          energy_level?: string | null
+          favorite_activities?: string[] | null
+          id?: string
+          parent_permission_level?: string | null
+          preferred_group_size?: string | null
+          preferred_timings?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      weekend_plan_participants: {
+        Row: {
+          id: string
+          joined_at: string | null
+          plan_id: string
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string | null
+          plan_id: string
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string | null
+          plan_id?: string
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekend_plan_participants_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "weekend_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      weekend_plans: {
+        Row: {
+          activity_type: string | null
+          budget_estimate: string | null
+          budget_range: string | null
+          category: string | null
+          created_at: string | null
+          current_participants: number | null
+          date_time: string | null
+          description: string | null
+          duration_hours: number | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          location: string | null
+          max_participants: number | null
+          organizer_id: string
+          planned_date: string | null
+          status: string | null
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          activity_type?: string | null
+          budget_estimate?: string | null
+          budget_range?: string | null
+          category?: string | null
+          created_at?: string | null
+          current_participants?: number | null
+          date_time?: string | null
+          description?: string | null
+          duration_hours?: number | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          location?: string | null
+          max_participants?: number | null
+          organizer_id: string
+          planned_date?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          activity_type?: string | null
+          budget_estimate?: string | null
+          budget_range?: string | null
+          category?: string | null
+          created_at?: string | null
+          current_participants?: number | null
+          date_time?: string | null
+          description?: string | null
+          duration_hours?: number | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          location?: string | null
+          max_participants?: number | null
+          organizer_id?: string
+          planned_date?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
