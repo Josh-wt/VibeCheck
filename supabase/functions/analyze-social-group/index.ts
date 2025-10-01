@@ -11,7 +11,7 @@ const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
 const backendUrl = Deno.env.get('SUPABASE_URL')!;
 const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
-// Enhanced fallback keyword-based classifier
+// Enhanced fallback keyword-based classifier optimized for friendship quiz responses
 function fallbackClassifier(userProfile: any): { socialGroup: string; confidence: number; reasoning: string; keyFactors: string[] } {
   const quizText = (userProfile.personalityAnswers || []).join(' ').toLowerCase();
   const profileText = JSON.stringify({
@@ -21,7 +21,7 @@ function fallbackClassifier(userProfile: any): { socialGroup: string; confidence
   }).toLowerCase();
   const allText = quizText + ' ' + profileText;
   
-  // Expanded score tracking for all 14 groups
+  // Personality-focused scoring for all groups
   const scores: Record<string, number> = {
     'Academic Achievers': 0,
     'Social Connectors': 0,
@@ -30,47 +30,73 @@ function fallbackClassifier(userProfile: any): { socialGroup: string; confidence
     'Tech Enthusiasts': 0,
     'Balanced Explorers': 0,
     'Environmental Advocates': 0,
-    'Entrepreneurial Minds': 0,
-    'Cultural Explorers': 0,
-    'Health & Wellness': 0,
-    'Community Volunteers': 0,
-    'STEM Innovators': 0,
-    'Media & Communication': 0,
-    'Outdoor Adventurers': 0
+    'Entrepreneurial Minds': 0
   };
 
-  // Keyword matching
+  // Enhanced keywords with personality traits from friendship quiz
   const keywords = {
-    'Academic Achievers': ['study', 'academic', 'learning', 'grades', 'school', 'books', 'knowledge', 'research', 'homework'],
-    'Social Connectors': ['friends', 'social', 'party', 'events', 'networking', 'people', 'outgoing', 'talking', 'meeting'],
-    'Creative Innovators': ['art', 'creative', 'music', 'design', 'imagination', 'artistic', 'innovative', 'original', 'drawing'],
-    'Athletic Competitors': ['sports', 'athletic', 'fitness', 'competition', 'team', 'exercise', 'physical', 'games', 'winning'],
-    'Tech Enthusiasts': ['gaming', 'technology', 'coding', 'computer', 'digital', 'tech', 'programming', 'online', 'video games'],
-    'Balanced Explorers': ['balanced', 'variety', 'diverse', 'different', 'explore', 'multiple', 'various', 'flexible', 'everything'],
-    'Environmental Advocates': ['environment', 'nature', 'sustainability', 'climate', 'eco', 'conservation', 'green', 'recycling'],
-    'Entrepreneurial Minds': ['business', 'entrepreneur', 'leadership', 'startup', 'innovation', 'money', 'investing', 'leading'],
-    'Cultural Explorers': ['culture', 'language', 'travel', 'international', 'diversity', 'world', 'foreign', 'global'],
-    'Health & Wellness': ['health', 'wellness', 'fitness', 'nutrition', 'mindfulness', 'yoga', 'meditation', 'wellbeing'],
-    'Community Volunteers': ['volunteer', 'charity', 'helping', 'community', 'service', 'giving', 'support', 'kindness'],
-    'STEM Innovators': ['science', 'math', 'engineering', 'stem', 'robotics', 'physics', 'chemistry', 'experiments'],
-    'Media & Communication': ['media', 'journalism', 'writing', 'broadcasting', 'podcast', 'communication', 'news', 'storytelling'],
-    'Outdoor Adventurers': ['hiking', 'camping', 'outdoor', 'adventure', 'nature', 'trail', 'exploring', 'wilderness']
+    'Academic Achievers': ['study', 'academic', 'learning', 'grades', 'school', 'books', 'knowledge', 'research', 'homework', 'library', 'quiet', 'focused', 'organized', 'plan', 'goals', 'intellectual', 'deep conversations', 'ideas'],
+    'Social Connectors': ['friends', 'social', 'party', 'events', 'networking', 'people', 'outgoing', 'talking', 'meeting', 'group', 'organize', 'community', 'team', 'together', 'helping others', 'energizing', 'gatherings'],
+    'Creative Innovators': ['art', 'creative', 'music', 'design', 'imagination', 'artistic', 'innovative', 'original', 'drawing', 'express', 'unique', 'performing', 'theater', 'writing', 'crafts', 'outside the box'],
+    'Athletic Competitors': ['sports', 'athletic', 'fitness', 'competition', 'team', 'exercise', 'physical', 'games', 'winning', 'active', 'outdoors', 'energy', 'push limits', 'training', 'workout'],
+    'Tech Enthusiasts': ['gaming', 'technology', 'coding', 'computer', 'digital', 'tech', 'programming', 'online', 'video games', 'build', 'problem-solving', 'logic', 'innovation', 'projects', 'app'],
+    'Balanced Explorers': ['balanced', 'variety', 'diverse', 'different', 'explore', 'multiple', 'various', 'flexible', 'everything', 'adapt', 'versatile', 'well-rounded', 'many interests', 'trying new'],
+    'Environmental Advocates': ['environment', 'nature', 'sustainability', 'climate', 'eco', 'conservation', 'green', 'recycling', 'planet', 'earth', 'outdoors', 'hiking', 'caring', 'making difference'],
+    'Entrepreneurial Minds': ['business', 'entrepreneur', 'leadership', 'startup', 'innovation', 'money', 'investing', 'leading', 'strategy', 'ambitious', 'opportunities', 'initiative', 'creating value']
   };
 
+  // Score based on keyword matches with increased weight for personality indicators
   for (const [group, words] of Object.entries(keywords)) {
-    scores[group] = words.filter(word => allText.includes(word)).length;
+    let score = 0;
+    for (const word of words) {
+      if (allText.includes(word)) {
+        // Give extra weight if keyword appears in quiz responses (personality data)
+        if (quizText.includes(word)) {
+          score += 2; // Double weight for quiz responses
+        } else {
+          score += 1; // Normal weight for profile data
+        }
+      }
+    }
+    scores[group] = score;
+  }
+
+  // Personality pattern matching for quiz-only scenarios
+  if (userProfile.personalityAnswers && userProfile.personalityAnswers.length > 0) {
+    const patterns = {
+      'Academic Achievers': /quiet|focus|learn|study|knowledge|intellectual|plan/gi,
+      'Social Connectors': /social|friends|people|outgoing|group|together|community/gi,
+      'Creative Innovators': /creative|art|music|express|imagination|unique|original/gi,
+      'Athletic Competitors': /active|sports|physical|competition|team|energy|outdoors/gi,
+      'Tech Enthusiasts': /tech|gaming|coding|digital|computer|problem|logic/gi,
+      'Balanced Explorers': /variety|diverse|multiple|explore|adapt|versatile|different/gi,
+      'Environmental Advocates': /nature|environment|sustainability|planet|conservation|green/gi,
+      'Entrepreneurial Minds': /leadership|business|ambitious|strategy|initiative|opportunities/gi
+    };
+
+    for (const [group, pattern] of Object.entries(patterns)) {
+      const matches = quizText.match(pattern);
+      if (matches) {
+        scores[group] += matches.length * 3; // High weight for pattern matches
+      }
+    }
   }
 
   // Find highest scoring group
   const sortedGroups = Object.entries(scores).sort((a, b) => b[1] - a[1]);
   const topGroup = sortedGroups[0];
-  const confidence = Math.min(0.85, 0.55 + (topGroup[1] * 0.05));
+  
+  // More lenient confidence calculation - always assign a group
+  let confidence = 0.65; // Base confidence
+  if (topGroup[1] > 10) confidence = 0.85;
+  else if (topGroup[1] > 5) confidence = 0.75;
+  else if (topGroup[1] > 0) confidence = 0.70;
 
   return {
     socialGroup: topGroup[0],
     confidence,
-    reasoning: `Keyword analysis identified ${topGroup[1]} relevant indicators for ${topGroup[0]} group`,
-    keyFactors: sortedGroups.slice(0, 3).map(([group, score]) => `${group}: ${score} matches`)
+    reasoning: `Personality analysis identified ${topGroup[1]} strong indicators for ${topGroup[0]} based on your responses`,
+    keyFactors: sortedGroups.slice(0, 3).map(([group, score]) => `${group}: ${score} indicators`)
   };
 }
 
@@ -169,18 +195,20 @@ serve(async (req) => {
           messages: [
             {
               role: 'system',
-              content: `You are an expert at analyzing high school student personalities and matching them to social groups.
+              content: `You are an expert at analyzing high school student personalities and matching them to social groups. You excel at understanding personality traits even from limited data.
 
 Available Social Groups:
 ${socialGroups.map(g => `- ${g.name}: ${g.description}`).join('\n')}
 
 Instructions:
-- Analyze ALL available data: quiz responses, academic profile, activity interests, and weekend preferences
-- Look for patterns and consistency across different data points
-- Consider both explicit statements and implicit indicators
-- Choose the group that best represents their PRIMARY interests and personality
-- Provide confidence score (0-1) based on data clarity and consistency
-- Only recommend a group if confidence is above 0.6`
+- Focus PRIMARILY on personality indicators from quiz responses - these reveal core traits
+- When available, use academic, activity, and weekend data for refinement
+- Look for key personality patterns: social vs. solitary, active vs. reflective, creative vs. analytical, structured vs. flexible
+- Even with minimal data, identify the dominant personality theme
+- Choose the group that best matches their personality profile
+- Provide confidence score (0-1): Above 0.7 is strong, 0.5-0.7 is good, below 0.5 needs more data
+- ALWAYS recommend a group - every personality has a best-fit social group
+- Consider that friendship quiz responses are the most reliable personality indicators`
             },
             {
               role: 'user',
