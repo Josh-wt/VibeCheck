@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Layout/Header";
 import AIStudyPartnerResults from "@/components/StudyHelp/AIStudyPartnerResults";
-import OnboardingRedirectModal from "@/components/OnboardingRedirectModal";
+import { AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const StudyHelp = () => {
   const { user, loading } = useAuth();
@@ -57,15 +58,31 @@ const StudyHelp = () => {
     return null;
   }
 
+  if (!hasOnboardingData) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <section className="min-h-screen flex items-center justify-center px-6 py-20">
+          <div className="max-w-2xl mx-auto text-center space-y-6">
+            <div className="flex items-center justify-center w-20 h-20 rounded-full bg-blue-100 mx-auto mb-4">
+              <AlertTriangle className="h-10 w-10 text-blue-600" />
+            </div>
+            <h1 className="text-4xl font-bold text-foreground">Complete Your Profile First</h1>
+            <p className="text-lg text-muted-foreground">
+              To find complementary study partners with AI-powered matching, complete your friendship quiz first. 
+              Our AI will analyze your academic strengths and weaknesses to match you with the perfect study partners.
+            </p>
+            <Button size="lg" onClick={() => navigate('/onboarding/friends')} className="mt-6">
+              Take Friendship Quiz
+            </Button>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      <OnboardingRedirectModal
-        requiredSection="friendship_discovery"
-        sectionTitle="Complete Your Friendship Profile"
-        sectionDescription="Answer the quiz so AI can analyze your profile and match you with complementary study partners."
-        onboardingRoute="/onboarding/friends"
-        pageTitle="Study Help"
-      />
       <Header />
       
       <section className="min-h-screen bg-background px-6 py-20">

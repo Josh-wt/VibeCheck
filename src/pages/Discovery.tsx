@@ -9,6 +9,8 @@ import SocialGroupDisplay from "@/components/SocialGroup/SocialGroupDisplay";
 import OnboardingRedirectModal from "@/components/OnboardingRedirectModal";
 import MatchingOverlay from "@/components/common/MatchingOverlay";
 import { useToast } from "@/hooks/use-toast";
+import { AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Discovery = () => {
   const { user, loading } = useAuth();
@@ -170,15 +172,31 @@ const Discovery = () => {
 
   if (!user) return null;
 
+  if (!hasOnboardingData) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <section className="min-h-screen flex items-center justify-center px-6 py-20">
+          <div className="max-w-2xl mx-auto text-center space-y-6">
+            <div className="flex items-center justify-center w-20 h-20 rounded-full bg-amber-100 mx-auto mb-4">
+              <AlertTriangle className="h-10 w-10 text-amber-600" />
+            </div>
+            <h1 className="text-4xl font-bold text-foreground">Complete Your Friendship Profile</h1>
+            <p className="text-lg text-muted-foreground">
+              Before you can discover compatible friends, we need to learn about your personality and interests. 
+              Take the friendship quiz to get AI-powered matches!
+            </p>
+            <Button size="lg" onClick={() => navigate('/onboarding/friends')} className="mt-6">
+              Start Friendship Quiz
+            </Button>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      <OnboardingRedirectModal
-        requiredSection="friendship_discovery"
-        sectionTitle="Complete Your Friendship Profile"
-        sectionDescription="Answer questions about your personality and interests to get matched with compatible friends."
-        onboardingRoute="/onboarding/friends"
-        pageTitle="Friend Discovery"
-      />
       <Header />
       
       {isAnalyzing && <MatchingOverlay />}

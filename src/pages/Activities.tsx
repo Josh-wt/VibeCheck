@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Layout/Header";
 import FixedActivityDiscovery from "@/components/Activities/FixedActivityDiscovery";
-import OnboardingRedirectModal from "@/components/OnboardingRedirectModal";
+import { AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Activities = () => {
   const { user, loading } = useAuth();
@@ -73,15 +74,31 @@ const Activities = () => {
     return null;
   }
 
+  if (!hasOnboardingData) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <section className="min-h-screen flex items-center justify-center px-6 py-20">
+          <div className="max-w-2xl mx-auto text-center space-y-6">
+            <div className="flex items-center justify-center w-20 h-20 rounded-full bg-amber-100 mx-auto mb-4">
+              <AlertTriangle className="h-10 w-10 text-amber-600" />
+            </div>
+            <h1 className="text-4xl font-bold text-foreground">Complete Your Activity Profile</h1>
+            <p className="text-lg text-muted-foreground">
+              Tell us about your interests, current activities, and availability to get personalized club and activity recommendations 
+              that match your schedule and passions.
+            </p>
+            <Button size="lg" onClick={() => navigate('/onboarding/activities')} className="mt-6">
+              Setup Activity Profile
+            </Button>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      <OnboardingRedirectModal
-        requiredSection="activity_onboarding"
-        sectionTitle="Complete Your Activity Profile"
-        sectionDescription="Tell us about your interests and availability to get personalized club and activity recommendations."
-        onboardingRoute="/onboarding/activities"
-        pageTitle="Activities"
-      />
       <Header />
       
       <section className="min-h-screen bg-background px-6 py-20">

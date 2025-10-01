@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Layout/Header";
 import RealWeekendDiscovery from "@/components/WeekendPlans/RealWeekendDiscovery";
-import OnboardingRedirectModal from "@/components/OnboardingRedirectModal";
+import { AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const WeekendPlans = () => {
   const { user, loading } = useAuth();
@@ -73,15 +74,31 @@ const WeekendPlans = () => {
     return null;
   }
 
+  if (!hasOnboardingData) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <section className="min-h-screen flex items-center justify-center px-6 py-20">
+          <div className="max-w-2xl mx-auto text-center space-y-6">
+            <div className="flex items-center justify-center w-20 h-20 rounded-full bg-orange-100 mx-auto mb-4">
+              <AlertTriangle className="h-10 w-10 text-orange-600" />
+            </div>
+            <h1 className="text-4xl font-bold text-foreground">Complete Your Weekend Profile</h1>
+            <p className="text-lg text-muted-foreground">
+              Share your weekend preferences, energy levels, and budget to get matched with fun activities 
+              and social groups that fit your lifestyle outside of school.
+            </p>
+            <Button size="lg" onClick={() => navigate('/onboarding/weekend')} className="mt-6">
+              Setup Weekend Profile
+            </Button>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      <OnboardingRedirectModal
-        requiredSection="weekend_assessment"
-        sectionTitle="Complete Your Weekend Profile"
-        sectionDescription="Share your weekend preferences to get matched with fun activities and social groups outside of school."
-        onboardingRoute="/onboarding/weekend"
-        pageTitle="Weekend Plans"
-      />
       <Header />
       
       <section className="min-h-screen bg-background px-6 py-20">
