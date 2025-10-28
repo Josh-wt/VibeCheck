@@ -81,7 +81,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-soft flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-soft flex items-center justify-center p-3 sm:p-4 relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-4 -left-4 w-24 h-24 bg-primary/10 rounded-full blur-xl"></div>
@@ -91,17 +91,17 @@ const Auth = () => {
       
       <div className="relative z-10 w-full max-w-md">
         <Card className="shadow-floating border-0 bg-card/80 backdrop-blur-sm">
-          <CardHeader className="text-center space-y-4 pb-6">
-            <div className="mx-auto w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center shadow-card">
-              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                <div className="w-4 h-4 bg-gradient-primary rounded-sm"></div>
+          <CardHeader className="text-center space-y-3 sm:space-y-4 pb-4 sm:pb-6 px-4 sm:px-6">
+            <div className="mx-auto w-12 h-12 sm:w-16 sm:h-16 bg-gradient-primary rounded-2xl flex items-center justify-center shadow-card">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-white rounded-lg flex items-center justify-center">
+                <div className="w-3 h-3 sm:w-4 sm:h-4 bg-gradient-primary rounded-sm"></div>
               </div>
             </div>
-            <div className="space-y-2">
-              <CardTitle className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            <div className="space-y-1 sm:space-y-2">
+              <CardTitle className="text-2xl sm:text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
                 {isSignUp ? "Join VibeCheck" : "Welcome Back"}
               </CardTitle>
-              <CardDescription className="text-base">
+              <CardDescription className="text-sm sm:text-base">
                 {isSignUp 
                   ? "Create your account to find your perfect study group" 
                   : "Sign in to continue your journey"
@@ -109,38 +109,38 @@ const Auth = () => {
               </CardDescription>
             </div>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <form onSubmit={handleAuth} className="space-y-5">
+          <CardContent className="space-y-5 sm:space-y-6 px-4 sm:px-6">
+            <form onSubmit={handleAuth} className="space-y-4 sm:space-y-5">
               {isSignUp && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName" className="text-sm font-medium">First Name</Label>
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="firstName" className="text-xs sm:text-sm font-medium">First Name</Label>
                       <Input
                         id="firstName"
                         type="text"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
-                        className="h-12 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                        className="h-10 sm:h-12 text-sm sm:text-base transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                         required
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName" className="text-sm font-medium">Last Name</Label>
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="lastName" className="text-xs sm:text-sm font-medium">Last Name</Label>
                       <Input
                         id="lastName"
                         type="text"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
-                        className="h-12 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                        className="h-10 sm:h-12 text-sm sm:text-base transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                         required
                       />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="grade" className="text-sm font-medium">Grade</Label>
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <Label htmlFor="grade" className="text-xs sm:text-sm font-medium">Grade</Label>
                     <Select value={grade} onValueChange={setGrade} required>
-                      <SelectTrigger className="h-12 transition-all duration-200 focus:ring-2 focus:ring-primary/20">
+                      <SelectTrigger className="h-10 sm:h-12 text-sm sm:text-base transition-all duration-200 focus:ring-2 focus:ring-primary/20">
                         <SelectValue placeholder="Select your grade" />
                       </SelectTrigger>
                       <SelectContent>
@@ -151,43 +151,43 @@ const Auth = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="schoolName" className="text-sm font-medium">School Name</Label>
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <Label htmlFor="schoolName" className="text-xs sm:text-sm font-medium">School Name</Label>
                     <Input
                       id="schoolName"
                       type="text"
                       value={schoolName}
                       onChange={(e) => setSchoolName(e.target.value)}
                       placeholder="e.g. Lincoln High School"
-                      className="h-12 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                      className="h-10 sm:h-12 text-sm sm:text-base transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                       required
                     />
                   </div>
                 </div>
               )}
               
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium">Student Email</Label>
+              <div className="space-y-3 sm:space-y-4">
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor="email" className="text-xs sm:text-sm font-medium">Student Email</Label>
                   <Input
                     id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your.name@school.edu"
-                    className="h-12 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="h-10 sm:h-12 text-sm sm:text-base transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                     required
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor="password" className="text-xs sm:text-sm font-medium">Password</Label>
                   <Input
                     id="password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="h-12 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="h-10 sm:h-12 text-sm sm:text-base transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                     required
                   />
                 </div>
@@ -195,7 +195,7 @@ const Auth = () => {
               
               <Button 
                 type="submit" 
-                className="w-full h-12 text-base font-semibold shadow-card hover:shadow-floating transition-all duration-300 hover:scale-105" 
+                className="w-full h-10 sm:h-12 text-sm sm:text-base font-semibold shadow-card hover:shadow-floating transition-all duration-300 hover:scale-105" 
                 disabled={isLoading}
                 variant="hero"
               >

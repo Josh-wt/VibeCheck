@@ -203,10 +203,10 @@ const RealMatchResults = ({ onBackToQuiz, onNavigateToPage }: RealMatchResultsPr
   return (
     <div className="space-y-8">
       {/* Header with back button */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-foreground">Your Interest Group</h1>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Your Interest Group</h1>
         {onBackToQuiz && (
-          <Button variant="outline" onClick={onBackToQuiz} className="flex items-center space-x-2">
+          <Button variant="outline" onClick={onBackToQuiz} className="flex items-center space-x-2 w-full sm:w-auto">
             <ArrowLeft className="h-4 w-4" />
             <span>Retake Quiz</span>
           </Button>
@@ -215,15 +215,15 @@ const RealMatchResults = ({ onBackToQuiz, onNavigateToPage }: RealMatchResultsPr
 
       {/* User Group Card */}
       {socialGroupDetails && (
-        <Card className="p-8 bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200">
-          <div className="text-center space-y-6">
-            <div className="text-6xl">🎓</div>
+        <Card className="p-6 sm:p-8 bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200">
+          <div className="text-center space-y-4 sm:space-y-6">
+            <div className="text-5xl sm:text-6xl">🎓</div>
             <div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
                 You're a {socialGroupDetails.name}!
               </h2>
-              <p className="text-muted-foreground mb-4">{socialGroupDetails.description}</p>
-              <Badge variant="secondary" className="bg-primary/10 text-primary">
+              <p className="text-sm sm:text-base text-muted-foreground mb-4">{socialGroupDetails.description}</p>
+              <Badge variant="secondary" className="bg-primary/10 text-primary text-xs sm:text-sm">
                 Interest-Based Matching
               </Badge>
             </div>
@@ -234,8 +234,8 @@ const RealMatchResults = ({ onBackToQuiz, onNavigateToPage }: RealMatchResultsPr
       {/* Group Members */}
       <div className="space-y-6">
         <div className="flex items-center space-x-2">
-          <Users className="h-5 w-5 text-primary" />
-          <h2 className="text-2xl font-bold text-foreground">Students in Your Group at {currentUserProfile?.school_name}</h2>
+          <Users className="h-5 w-5 text-primary flex-shrink-0" />
+          <h2 className="text-lg sm:text-2xl font-bold text-foreground break-words">Students in Your Group at {currentUserProfile?.school_name}</h2>
         </div>
         
         {matches.length === 0 ? (
@@ -248,37 +248,37 @@ const RealMatchResults = ({ onBackToQuiz, onNavigateToPage }: RealMatchResultsPr
             </p>
           </Card>
         ) : (
-          <div className="grid gap-6">
+          <div className="grid gap-4 sm:gap-6">
             {matches.map((student) => (
-              <Card key={student.id} className="p-6 hover:shadow-md transition-shadow">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                      <Users className="h-6 w-6 text-primary" />
+              <Card key={student.id} className="p-4 sm:p-6 hover:shadow-md transition-shadow">
+                <div className="flex flex-col sm:flex-row items-start justify-between gap-3 sm:gap-0 mb-4">
+                  <div className="flex items-center space-x-3 sm:space-x-4 w-full sm:w-auto">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Users className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-lg">{student.name}</h3>
-                      <p className="text-muted-foreground">{student.grade}th Grade • {student.social_group}</p>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-base sm:text-lg truncate">{student.name}</h3>
+                      <p className="text-sm text-muted-foreground truncate">{student.grade}th Grade • {student.social_group}</p>
                     </div>
                   </div>
-                  <Badge className="bg-green-50 text-green-600 border-green-200">
+                  <Badge className="bg-green-50 text-green-600 border-green-200 text-xs sm:text-sm whitespace-nowrap">
                     Same Group
                   </Badge>
                 </div>
 
                 <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     You're both in the {student.social_group} group, which means you share similar interests and social preferences. This is a great foundation for friendship!
                   </p>
 
                   <div className="flex items-center justify-between pt-4 border-t">
-                    <div className="flex space-x-2">
+                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                       <Button
                         variant={connectedStudents.has(student.id) ? "default" : "outline"}
                         size="sm"
                         onClick={() => handleConnectClick(student.id)}
                         disabled={connectedStudents.has(student.id)}
-                        className="flex items-center space-x-1"
+                        className="flex items-center justify-center space-x-1 w-full sm:w-auto"
                       >
                         <Heart className="h-4 w-4" />
                         <span>{connectedStudents.has(student.id) ? "Connected" : "Connect"}</span>
@@ -287,7 +287,7 @@ const RealMatchResults = ({ onBackToQuiz, onNavigateToPage }: RealMatchResultsPr
                       <Button
                         variant="outline"
                         size="sm"
-                        className="flex items-center space-x-1"
+                        className="flex items-center justify-center space-x-1 w-full sm:w-auto"
                       >
                         <MessageCircle className="h-4 w-4" />
                         <span>Message</span>
